@@ -3,10 +3,17 @@ import ReactDOM from 'react-dom';
 import './app/styles.css';
 import App from './app/App';
 import reportWebVitals from './reportWebVitals';
+import {BrowserRouter} from 'react-router-dom';
+import ScrollToTop from '../src/app/layout/ScrollToTop'
+
 
 
 ReactDOM.render(
-    <App />,
+  <BrowserRouter>
+      <ScrollToTop />
+     <App />
+  </BrowserRouter>,
+   
   document.getElementById('root')
 );
 

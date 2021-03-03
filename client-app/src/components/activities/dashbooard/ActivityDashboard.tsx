@@ -1,75 +1,42 @@
-import React, { SyntheticEvent } from 'react';
+import React, {useEffect, useContext} from 'react';
 import { Grid, GridColumn} from 'semantic-ui-react';
-import { IActivity } from '../../../app/models/Activity';
-import { ActivityList } from './ActivityList';
-import {Details} from '../details/ActivityDetails';
-import {ActivityForm} from '../form/ActivityForm';
+import  ActivityList  from './ActivityList';
+import { observer } from 'mobx-react-lite';
+import ActivityStore from '../../../app/stores/activityStore'
+import {Loading} from '../../../app/layout/Loading'
 
-interface IProps {
-    activities: IActivity[];
-    selectActivity: (id:string) => void;
-    selectedActivity: IActivity | null;
-    editMode: boolean;
-    setEditMode: (editMode: boolean) => void;
-    setSelectedActivity: (activity: IActivity | null) => void;
-    createActivity: (activity: IActivity) => void;
-    editActivity: (activity:IActivity) => void;
-    // Giving each delete a unique id for the loading spinner
-    deleteActivity: (event: SyntheticEvent<HTMLButtonElement>, id: string) => void;
-    submitting: boolean;
-    target: string;
-}
 
 //React.FC identifies the type of component youre passing through
-export const ActivityDashboard: React.FC<IProps> = ({
-    activities, 
-    selectActivity, 
-    selectedActivity, 
-    editMode, 
-    setEditMode, 
-    setSelectedActivity,
-    createActivity,
-    editActivity,
-    deleteActivity,
-    submitting,
-    target
-    }) => {
-    
+ const ActivityDashboard: React.FC = () => {
+        
+        //Getting the activities and edit mode from activity store 
+        
+
+        const activityStore = useContext(ActivityStore)
+
+        useEffect(() => {
+          //have to tell use effect about the dependencies it needs, you put that in the empty array
+          activityStore.loadActivities();
+          // Empty array ensures our use effect runs one time only
+        }, [activityStore]);
+      
+        if (activityStore.loadingInitial) return <Loading content = {'Loading activities'}/>
+      //The funny path will render if there is anything more than that innitial forward slash
+      //seperates home page from navbar
+        
+
     return (
         <Grid>
             <Grid.Column width={10}>
-              <ActivityList activities = {activities} 
-              selectActivity = {selectActivity} 
-              deleteActivity = {deleteActivity}
-              submitting = {submitting}
-              target = {target}
-              />
+              <ActivityList />
+              
             </Grid.Column>
             <GridColumn width={6}>
-                {
-                    // to the right of && is only executed if that is not equal to null
-                    selectedActivity && !editMode && ( 
-                    
-                    <Details 
-                    activity = {selectedActivity} 
-                    setEditMode = {setEditMode} 
-                    setSelectedActivity = {setSelectedActivity} />
-                    )}
                 
-                {
-                    editMode &&  <ActivityForm 
-                    //in order to get the form to reset when create button is clicked
-                    key ={selectedActivity && selectedActivity.id || 0}
-                    setEditMode = {setEditMode}
-                    initialFormActivity = {selectedActivity!} 
-                    createActivity = {createActivity}
-                    editActivity = {editActivity}
-                    submitting={submitting}
-                    />
-                    
-                }
-               
+               <h2>Activity filters</h2>
             </GridColumn>
         </Grid>
     )
 }
+
+export default observer (ActivityDashboard)

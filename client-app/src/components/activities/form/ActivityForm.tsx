@@ -1,23 +1,29 @@
-import React, {FormEvent, useState} from 'react';
+import React, {FormEvent, useContext, useState, useEffect} from 'react';
 import { Button, Form, Segment } from 'semantic-ui-react';
 import { IActivity } from '../../../app/models/Activity';
 import {v4 as uuid} from 'uuid';
+import ActivityStore from '../../../app/stores/activityStore';
+import { observer } from 'mobx-react-lite';
+import { RouteComponentProps } from 'react-router-dom';
 
-interface IProps {
-    setEditMode: (editMode:boolean) => void;
-    initialFormActivity: IActivity;
-    createActivity: (activity: IActivity) => void;
-    editActivity: (activity:IActivity) => void;
-    submitting: boolean;
+
+interface ActivityForms {
+    id: string;
 }
 
-export const ActivityForm: React.FC<IProps> = ({setEditMode, initialFormActivity, createActivity, editActivity, submitting}) => {
+ const ActivityForm: React.FC<RouteComponentProps<ActivityForms>> = ({match, history}) => {
     
-    const initializeForm = () => {
-        if(initialFormActivity) {
-            return initialFormActivity;
-        } else {
-           return {
+    const activityStore = useContext(ActivityStore);
+    const {createActivity, 
+        editActivity, 
+        submitting, 
+        loadActivity, 
+        selectedActivity,
+        clearActivity} = activityStore;
+
+
+
+    const [activity, setActivity] = useState<IActivity>({
                 id:'',
                 title: '',
                 category: '',
@@ -25,11 +31,23 @@ export const ActivityForm: React.FC<IProps> = ({setEditMode, initialFormActivity
                 date: '',
                 city: '', 
                 venue: ''
-           }
-        }
-    };
+    });
 
-    const [activity, setActivity] = useState<IActivity>(initializeForm);
+    // because it ran syncroniously if you refreshed the page values would be blank
+//Combat that by setting the activit in the use effect so it runs after
+    useEffect(()=> {
+        if(match.params.id && activity.id.length === 0 ) {
+            loadActivity(match.params.id).then(()=> {
+                //if there is a selected activity to combat 'undefined' possability
+                selectedActivity && setActivity(selectedActivity)
+            })
+        }
+        // used to cleanup and basically unmount our activity after use
+        return () => {
+            clearActivity()
+        }
+       
+    }, [loadActivity,clearActivity, match.params.id, selectedActivity]);
     
 const handleInputChange = (event: FormEvent <HTMLInputElement | HTMLTextAreaElement>) => {
     //would normally be event.target
@@ -43,10 +61,20 @@ const handleSubmit = () => {
             ...activity,
             id: uuid()
         }
-
-        createActivity(newActivity);
+        createActivity(newActivity)
+        .then(()=> {
+            history.push(`/activities/${newActivity.id}`)
+        })
+        .catch((err)=> {
+            console.log(err)
+        })
     } else {
-        editActivity(activity);
+        editActivity(activity).then(()=> {
+            history.push(`/activities/${activity.id}`)
+        })
+        .catch((err)=> {
+            console.log(err)
+        })
     }
 }
 
@@ -98,8 +126,10 @@ const handleSubmit = () => {
                />
                
                <Button loading={submitting} floated="right" type="submit" content="Submit" color="instagram"/>
-               <Button onClick={()=> setEditMode(false)} type="button" floated="right" content="Cancel" color="grey"/>
+               <Button onClick={()=> history.push(`/activities/${activity.id}`)} type="button" floated="right" content="Cancel" color="grey"/>
            </Form>
        </Segment>
     )
 }
+
+export default observer (ActivityForm);
