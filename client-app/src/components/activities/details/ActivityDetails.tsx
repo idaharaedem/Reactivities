@@ -1,9 +1,13 @@
 import { observer } from 'mobx-react-lite';
 import React, { useContext, useEffect } from 'react'
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Card, Image } from 'semantic-ui-react'
+import { RouteComponentProps } from 'react-router-dom';
+import { Grid } from 'semantic-ui-react'
 import ActivityStore from '../../../app/stores/activityStore';
 import {Loading} from '../../../app/layout/Loading';
+import ActivityDetailHeader  from './ActivityDetailHeader';
+import  ActivityDetailInfo  from './ActivityDetailInfo';
+import  ActivityDetailChat  from './ActivityDetailChat';
+import ActivityDetalSideBar  from './ActivityDetalSideBar';
 
 interface paramDetails {
     id: string;
@@ -11,7 +15,7 @@ interface paramDetails {
 
 
 //RouteComponentProps access to our history, location, match etc
- const Details: React.FC<RouteComponentProps<paramDetails>> = ({match, history}) => {
+ const Details: React.FC<RouteComponentProps<paramDetails>> = ({match}) => {
     
     const activityStore = useContext(ActivityStore);
     const {selectedActivity: activity, loadActivity, loadingInitial } = activityStore
@@ -26,25 +30,17 @@ interface paramDetails {
     if(loadingInitial || !activity) return <Loading content={'Loading Activity'}/>
 
     return (
-        //takes up all the space
-        <Card fluid>
-            <Image src={`/assets/categoryImages/${activity!.category}.jpg`} wrapped ui={false} />
-            <Card.Content>
-            <Card.Header>{activity!.title}</Card.Header>
-            <Card.Meta>
-                <span>{activity!.date}</span>
-            </Card.Meta>
-            <Card.Description>
-                {activity!.description}
-            </Card.Description>
-            </Card.Content>
-            <Card.Content extra>
-                <Button.Group>
-                    <Button as = {Link} to= {`/manage/${activity.id}`} basic color="blue" content="Edit"/>
-                    <Button onClick={()=> history.push('/activities')} basic color="grey" content="Cancel"/>
-                </Button.Group>
-            </Card.Content>
-     </Card>
+        <Grid>
+            <Grid.Column width={10}>
+                <ActivityDetailHeader activity = {activity}/>
+                <ActivityDetailInfo activity = {activity}/>
+                <ActivityDetailChat/>
+            </Grid.Column>
+
+            <Grid.Column width = {6}>
+                <ActivityDetalSideBar/>
+            </Grid.Column>
+        </Grid>
     )
 }
 

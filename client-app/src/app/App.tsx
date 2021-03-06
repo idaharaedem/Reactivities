@@ -11,7 +11,9 @@ import Details from "../components/activities/details/ActivityDetails";
 
 const App: React.FC <RouteComponentProps> = ({location}) => {
 
-
+    //The funny path will render if there is anything more than that innitial forward slash
+      //seperates home page from navbar
+        
   return (
     //Can use instead of div
     <Fragment>

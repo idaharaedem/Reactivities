@@ -23,8 +23,19 @@ class ActivityStore {
      target = '';
 
      //Computed
-     activitiesByDate = () => {
-        return Array.from(this.activityRegistry.values()).slice().sort((a,b) => Date.parse(a.date) -  Date.parse(b.date))
+     get activitiesByDate() {
+        return this.groupActivitiesByDate(Array.from(this.activityRegistry.values()));
+     }
+
+     groupActivitiesByDate (activities: IActivity[]) {
+        const sortAct = activities.sort((a,b) => Date.parse(a.date) -  Date.parse(b.date));
+
+    //bundle each date to a collection of matching IActivity arrays
+        return Object.entries(sortAct.reduce((accumActivities, currDateActivity) => {
+            const date = currDateActivity.date.split('T')[0];
+            accumActivities[date] = accumActivities[date] ? [...accumActivities[date], currDateActivity] : [currDateActivity];
+            return accumActivities;
+        }, {} as {[key:string] : IActivity[]}));
      }
     
 
@@ -43,7 +54,7 @@ class ActivityStore {
                  });
                 
              }); 
-
+             console.log(this.groupActivitiesByDate(activities))
          } catch(err) {
             console.log(err);
          }

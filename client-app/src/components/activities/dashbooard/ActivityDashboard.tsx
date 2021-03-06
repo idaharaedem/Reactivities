@@ -21,9 +21,7 @@ import {Loading} from '../../../app/layout/Loading'
         }, [activityStore]);
       
         if (activityStore.loadingInitial) return <Loading content = {'Loading activities'}/>
-      //The funny path will render if there is anything more than that innitial forward slash
-      //seperates home page from navbar
-        
+      
 
     return (
         <Grid>
@@ -31,8 +29,7 @@ import {Loading} from '../../../app/layout/Loading'
               <ActivityList />
               
             </Grid.Column>
-            <GridColumn width={6}>
-                
+            <GridColumn width={6}>  
                <h2>Activity filters</h2>
             </GridColumn>
         </Grid>
