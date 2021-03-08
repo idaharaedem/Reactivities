@@ -4,10 +4,12 @@ import "semantic-ui-css/semantic.min.css";
 import Navbar  from "../components/nav/Navbar";
 import  ActivityDashboard  from "../components/activities/dashbooard/ActivityDashboard";
 import {observer} from 'mobx-react-lite';
-import { Route, RouteComponentProps, withRouter } from "react-router-dom";
+import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
 import { HomePage } from "../pages/HomePage";
 import ActivityForm from "../components/activities/form/ActivityForm";
 import Details from "../components/activities/details/ActivityDetails";
+import NotFound from "./layout/NotFound";
+import { ToastContainer } from "react-toastify";
 
 const App: React.FC <RouteComponentProps> = ({location}) => {
 
@@ -17,18 +19,23 @@ const App: React.FC <RouteComponentProps> = ({location}) => {
   return (
     //Can use instead of div
     <Fragment>
+      <ToastContainer position='bottom-left'/>
       <Route exact path='/' component={HomePage}/>
       
       <Route path={'/(.+)'} render={()=> ( <Fragment>
         <Navbar/>
-        <Container style={{ marginTop: "8em" }}> 
+        <Container style={{ marginTop: "8em" }}>
+          <Switch>
           <Route exact path='/activities' component={ActivityDashboard}/>
           <Route  path='/activities/:id' component={Details}/>
           <Route key={location.key} path={['/createActivity', '/manage/:id']} component={ActivityForm}/>
+          <Route  component={NotFound}/>
+          </Switch> 
         </Container>
       </Fragment>
       )}/>
     </Fragment>
+    //If a route is not found then the last route will be loaded
   );
   //need a key so when you click 'createActivity it remounts
 };

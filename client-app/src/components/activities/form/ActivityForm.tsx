@@ -47,7 +47,7 @@ interface ActivityForms {
             clearActivity()
         }
        
-    }, [loadActivity,clearActivity, match.params.id, selectedActivity]);
+    }, [loadActivity,clearActivity, match.params.id, selectedActivity, activity.id.length]);
     
 const handleInputChange = (event: FormEvent <HTMLInputElement | HTMLTextAreaElement>) => {
     //would normally be event.target

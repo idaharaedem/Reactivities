@@ -15,7 +15,7 @@ interface paramDetails {
 
 
 //RouteComponentProps access to our history, location, match etc
- const Details: React.FC<RouteComponentProps<paramDetails>> = ({match}) => {
+ const Details: React.FC<RouteComponentProps<paramDetails>> = ({match, history}) => {
     
     const activityStore = useContext(ActivityStore);
     const {selectedActivity: activity, loadActivity, loadingInitial } = activityStore
@@ -23,11 +23,17 @@ interface paramDetails {
 
     
     useEffect(() => {
-     loadActivity(match.params.id)   
-    }, [loadActivity, match.params.id]);
+     loadActivity(match.params.id)
+    }, [loadActivity, match.params.id, history]);
+
+    if(!activity) {
+        return <h2>Activity not  found</h2>
+    }
 
     //if loading component or activity is undefined keep loading
-    if(loadingInitial || !activity) return <Loading content={'Loading Activity'}/>
+    if(loadingInitial) return <Loading content={'Loading Activity'}/>
+
+   
 
     return (
         <Grid>
