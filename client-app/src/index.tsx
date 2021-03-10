@@ -7,6 +7,10 @@ import {createBrowserHistory} from 'history'
 import {Router} from 'react-router-dom';
 import ScrollToTop from '../src/app/layout/ScrollToTop';
 import 'react-toastify/dist/ReactToastify.min.css';
+import 'react-widgets/dist/css/react-widgets.css';
+import dateFnsLocalizer from 'react-widgets-date-fns';
+
+dateFnsLocalizer();
 
 //in the event that we get a 404 response to push the history throughout the app
 export const history = createBrowserHistory();

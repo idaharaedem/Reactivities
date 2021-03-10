@@ -2,6 +2,8 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Button, Item, Segment, Image, Header } from 'semantic-ui-react';
 import { IActivity } from '../../../app/models/Activity';
+import { Link } from 'react-router-dom';
+import {format} from 'date-fns'
 
 
 const activityImageStyle = {
@@ -17,10 +19,6 @@ const activityImageStyle = {
     color: 'white'
   };
 
-  const dateFormater = (activity: IActivity) => {
-    let date = activity.date.split('T')[0];
-    return date;
-  }
 
  const ActivityDetailHeader: React.FC<{activity: IActivity}> = ({activity}) => {
     //Fluid takes up all available content
@@ -37,7 +35,7 @@ const activityImageStyle = {
                   content={activity.title}
                   style={{ color: 'white' }}
                 />
-                <p>{dateFormater(activity)}</p>
+                <p>{format(activity.date, 'eeee do MMMM')}</p>
                 <p>
                   Hosted by <strong>Bob</strong>
                 </p>
@@ -49,7 +47,7 @@ const activityImageStyle = {
       <Segment clearing attached='bottom'>
         <Button color='olive'>Join Activity</Button>
         <Button>Cancel attendance</Button>
-        <Button color='black' floated='right'>
+        <Button as={Link} to={()=>`/manage/${activity.id}`} color='black' floated='right'>
           Manage Event
         </Button>
       </Segment>

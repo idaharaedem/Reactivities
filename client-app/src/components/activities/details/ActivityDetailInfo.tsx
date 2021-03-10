@@ -2,11 +2,9 @@ import React from 'react'
 import { Segment, Grid, Icon } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/Activity'
 import { observer } from 'mobx-react-lite';
+import {format} from 'date-fns';
 
-const dateFormater = (activity: IActivity) => {
-    let date = activity.date.split('T')[0];
-    return date;
-  }
+
 
  const ActivityDetailInfo: React.FC<{activity: IActivity}> = ({activity}) => {
     return (
@@ -28,7 +26,8 @@ const dateFormater = (activity: IActivity) => {
             </Grid.Column>
             <Grid.Column width={15}>
               <span>
-                {dateFormater(activity)}
+                {format(activity.date, 'eeee do MMMM')} at 
+                {format(activity.date, 'h: mm a')}
               </span>
             </Grid.Column>
           </Grid>
