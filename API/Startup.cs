@@ -1,13 +1,22 @@
+using System.Text;
 using API.Middleware;
 using Application.Activities;
+using Application.interfaces;
+using Domain;
 using FluentValidation.AspNetCore;
+using Infrastructure.Security;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistance;
 
@@ -28,7 +37,11 @@ namespace API
             services.AddDbContext<DataContext> (options => {
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
-            services.AddControllers().AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<Create>());
+            services.AddControllers(opt => {
+                //allowing the authoization throughout the program
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            }).AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<Create>());
             services.AddCors(opt => {
                 opt.AddPolicy("CorsPolicy", policy => {
                     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
@@ -37,10 +50,35 @@ namespace API
                  //Telling mediatR where to look
                 //We will have lots of handlers but you just need to tell it one
             services.AddMediatR(typeof(List.Handler).Assembly);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
+
+            var builder = services.AddIdentityCore<AppUser>();
+            var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
+            identityBuilder.AddEntityFrameworkStores<DataContext>();
+            //Create and manage users via user manager service
+            identityBuilder.AddSignInManager<SignInManager<AppUser>>();
+            
+            //The token key is from your user secrets
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(opt => {
+                //What we shoul be validating when a token is recieved
+                opt.TokenValidationParameters = new TokenValidationParameters 
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateAudience = false,
+                    ValidateIssuer = false
+                };
+            });
+ 
+            services.AddScoped<IJwttGenerator, JwtGenerator>();
+            services.AddScoped<IUserAccessor, UserAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +101,8 @@ namespace API
             app.UseRouting();
 
             app.UseCors("CorsPolicy");
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
