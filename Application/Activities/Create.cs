@@ -2,9 +2,11 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistance;
 
 namespace Application.Activities
@@ -14,7 +16,7 @@ namespace Application.Activities
         public class Command : IRequest
         {
             public Guid Id { get; set; }
-         
+
             public string Title { get; set; }
 
             public string Description { get; set; }
@@ -46,29 +48,49 @@ namespace Application.Activities
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IUserAccessor _userAccessor;
+
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
+
                 _context = context;
 
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var activity = new Activity 
+                //Creating a new activity
+                var activity = new Activity
                 {
-                 Id = request.Id,
-                 Title = request.Title,
-                 Description = request.Description,
-                 Category = request.Category,
-                 Date = request.Date,
-                 City = request.City,
-                 Venue = request.Venue
+                    Id = request.Id,
+                    Title = request.Title,
+                    Description = request.Description,
+                    Category = request.Category,
+                    Date = request.Date,
+                    City = request.City,
+                    Venue = request.Venue
                 };
 
                 _context.Activities.Add(activity);
+                
+                //Adding attendee
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.getUsername());
+
+                var attendie = new UserActivity 
+                {
+                    AppUser = user,
+                    Activity = activity,
+                    IsHost = true,
+                    Date = DateTime.Now
+                };
+
+                _context.UserActivities.Add(attendie);
+
                 var successfully = await _context.SaveChangesAsync() > 0;
 
-                if(successfully) {
+                if (successfully)
+                {
 
                     return Unit.Value;
                 }
@@ -76,7 +98,7 @@ namespace Application.Activities
                 throw new Exception("Problem saving current changes");
 
 
-                
+
             }
         }
 

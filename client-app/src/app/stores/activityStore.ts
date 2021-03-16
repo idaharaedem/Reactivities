@@ -1,18 +1,22 @@
-import { makeAutoObservable, configure, runInAction} from "mobx";
+import { makeAutoObservable, runInAction} from "mobx";
 import { SyntheticEvent } from "react";
-import { createContext } from "react";
 import { toast } from "react-toastify";
 import { history } from "../..";
 import agent from "../API/agent";
 import { IActivity } from "../models/Activity";
+import { RootStore } from "./rootStore";
 
-configure({enforceActions: 'always'});
+
 
 //This is a class property
-class ActivityStore {
+export default class ActivityStore {
     
-    constructor() {
+    rootStore: RootStore
+
+    constructor(rootStore: RootStore) {
         makeAutoObservable(this);
+        //Will be able to access our rootStore via our activity store
+        this.rootStore = rootStore 
     }
 
     //observables
@@ -178,4 +182,4 @@ class ActivityStore {
 }
 
 //to use our store inside react components
-export default createContext(new ActivityStore())
+//export default createContext(new ActivityStore())

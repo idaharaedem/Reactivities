@@ -2,12 +2,12 @@ import { observer } from 'mobx-react-lite';
 import React, { useContext, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom';
 import { Grid } from 'semantic-ui-react'
-import ActivityStore from '../../../app/stores/activityStore';
 import {Loading} from '../../../app/layout/Loading';
 import ActivityDetailHeader  from './ActivityDetailHeader';
 import  ActivityDetailInfo  from './ActivityDetailInfo';
 import  ActivityDetailChat  from './ActivityDetailChat';
 import ActivityDetalSideBar  from './ActivityDetalSideBar';
+import { RootStoreContext } from '../../../app/stores/rootStore';
 
 interface paramDetails {
     id: string;
@@ -17,8 +17,9 @@ interface paramDetails {
 //RouteComponentProps access to our history, location, match etc
  const Details: React.FC<RouteComponentProps<paramDetails>> = ({match, history}) => {
     
-    const activityStore = useContext(ActivityStore);
-    const {selectedActivity: activity, loadActivity, loadingInitial } = activityStore
+    const rootStore = useContext(RootStoreContext)
+
+    const {selectedActivity: activity, loadActivity, loadingInitial } = rootStore.activityStore;
 
 
     

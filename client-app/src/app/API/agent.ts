@@ -2,8 +2,20 @@ import axios, { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 import {IActivity} from '../models/Activity'
+import { IUser, IUserFormValues } from '../models/User';
 
 axios.defaults.baseURL = 'http://localhost:5000/api';
+
+//We can also use an interceptor for the request
+//getting authentication for the user to see the activity list
+axios.interceptors.request.use((config) => {
+    const token = window.localStorage.getItem('token');
+    if(token) config.headers.Authorization = `Bearer ${token}`;
+    return config
+    
+}, error => {
+    return Promise.reject(error);
+})
 
 //used to handle errors from the client side. First paramater is what to do when it is fulfilled, second is when its rejected.
 axios.interceptors.response.use(undefined, error => {
@@ -50,6 +62,13 @@ const Activities = {
     delete: (id: string) => requests.delete(`/activities/${id}`)
 }
 
+const User = {
+    current: (): Promise<IUser> => requests.get('/user'),
+    login: (user: IUserFormValues) :Promise<IUser> => requests.post(`/user/login/`, user),
+    register: (user: IUserFormValues): Promise<IUser> => requests.post(`/user/register/`, user)
+}
+
 export default {
-    Activities
+    Activities,
+    User
 }
