@@ -21,14 +21,14 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Activity>>> ActivityList () 
+        public async Task<ActionResult<List<ActivitityDTO>>> ActivityList () 
         {
             return await _mediator.Send(new List.Query());
         }
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<Activity>> GetActivity(Guid id) 
+        public async Task<ActionResult<ActivitityDTO>> GetActivity(Guid id) 
         {
             return await _mediator.Send(new Details.Query{Id = id});
         }
@@ -40,6 +40,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Policy = "IsActivityHost")]
         public async Task<ActionResult<Unit>> Edit(Guid id, Edit.Command command) 
         {   
             command.Id = id; 
@@ -47,10 +48,22 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-
+        [Authorize(Policy = "IsActivityHost")]
         public async Task <ActionResult<Unit>> DeleteActivity (Guid id) 
         {   
             return await _mediator.Send(new Delete.Command{Id = id});
+        }
+
+        [HttpPost("{id}/attend")]
+        public async Task<ActionResult<Unit>> Attend (Guid id) 
+        {
+            return await _mediator.Send(new Attend.Command{Id = id});
+        }
+
+        [HttpDelete("{id}/attend")]
+        public async Task<ActionResult<Unit>> UnAttend (Guid id) 
+        {
+            return await _mediator.Send(new UnAttend.Command{Id = id});
         }
     }
 }

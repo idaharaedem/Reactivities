@@ -2,6 +2,7 @@ using System.Text;
 using API.Middleware;
 using Application.Activities;
 using Application.interfaces;
+using AutoMapper;
 using Domain;
 using FluentValidation.AspNetCore;
 using Infrastructure.Security;
@@ -35,7 +36,9 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext> (options => {
+                options.UseLazyLoadingProxies();
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+                
             });
             services.AddControllers(opt => {
                 //allowing the authoization throughout the program
@@ -51,6 +54,8 @@ namespace API
                 //We will have lots of handlers but you just need to tell it one
             services.AddMediatR(typeof(List.Handler).Assembly);
 
+            services.AddAutoMapper(typeof(List.Handler));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -61,6 +66,14 @@ namespace API
             identityBuilder.AddEntityFrameworkStores<DataContext>();
             //Create and manage users via user manager service
             identityBuilder.AddSignInManager<SignInManager<AppUser>>();
+
+            services.AddAuthorization(opt => {
+                opt.AddPolicy("IsActivityHost", policy => {
+                    policy.Requirements.Add(new IsHostRequirement());
+                });
+            });
+
+            services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
             
             //The token key is from your user secrets
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));

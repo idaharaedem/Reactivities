@@ -74,11 +74,12 @@ namespace Application.Activities
 
                 _context.Activities.Add(activity);
                 
-                //Adding attendee
+                //Adding attendee (The given user) as host
                 var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.getUsername());
 
                 var attendie = new UserActivity 
                 {
+                    // dotnet is smart enough to assign the Id for app user and activity
                     AppUser = user,
                     Activity = activity,
                     IsHost = true,
