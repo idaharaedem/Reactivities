@@ -9,7 +9,7 @@ import { observer } from 'mobx-react-lite';
           textAlign='center'
           attached='top'
           inverted
-          color='green'
+          color='orange'
           style={{ border: 'none' }}
           secondary
         >

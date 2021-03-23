@@ -45,7 +45,7 @@ interface paramDetails {
             </Grid.Column>
 
             <Grid.Column width = {6}>
-                <ActivityDetalSideBar/>
+                <ActivityDetalSideBar attendees={activity.attendees}/>
             </Grid.Column>
         </Grid>
     )

@@ -12,7 +12,7 @@ import {format} from 'date-fns';
         <Segment attached='top'>
           <Grid>
             <Grid.Column width={1}>
-              <Icon size='large' color='olive' name='info' />
+              <Icon size='large' color='red' name='info' />
             </Grid.Column>
             <Grid.Column width={15}>
               <p>{activity.description}</p>
@@ -22,7 +22,7 @@ import {format} from 'date-fns';
         <Segment attached>
           <Grid verticalAlign='middle'>
             <Grid.Column width={1}>
-              <Icon name='calendar' size='large' color='olive' />
+              <Icon name='calendar' size='large' color='red' />
             </Grid.Column>
             <Grid.Column width={15}>
               <span>
@@ -35,7 +35,7 @@ import {format} from 'date-fns';
         <Segment attached>
           <Grid verticalAlign='middle'>
             <Grid.Column width={1}>
-              <Icon name='marker' size='large' color='olive' />
+              <Icon name='marker' size='large' color='red' />
             </Grid.Column>
             <Grid.Column width={11}>
               <span>{activity.venue}, {activity.city}</span>

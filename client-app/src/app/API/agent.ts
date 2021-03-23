@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 import {IActivity} from '../models/Activity'
+import { IProfile } from '../models/Profile';
 import { IUser, IUserFormValues } from '../models/User';
 
 axios.defaults.baseURL = 'http://localhost:5000/api';
@@ -59,7 +60,9 @@ const Activities = {
     details: (id:string) => requests.get(`/activities/${id}`),
     create: (activity: IActivity) => requests.post(`/activities`, activity),
     update: (id:string, activity: IActivity) => requests.put(`/activities/${id}`, activity),
-    delete: (id: string) => requests.delete(`/activities/${id}`)
+    delete: (id: string) => requests.delete(`/activities/${id}`),
+    attend: (id: string) => requests.post(`/activities/${id}/attend`, {}),
+    unAttend: (id: string) => requests.delete(`/activities/${id}/attend`)
 }
 
 const User = {
@@ -68,7 +71,12 @@ const User = {
     register: (user: IUserFormValues): Promise<IUser> => requests.post(`/user/register/`, user)
 }
 
+const Profiles = {
+    getDetails: (username: string) : Promise<IProfile> => requests.get(`/profile/${username}`)
+}
+
 export default {
     Activities,
-    User
+    User,
+    Profiles
 }

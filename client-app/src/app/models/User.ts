@@ -1,7 +1,7 @@
 // What we recieve back from the server
 export interface IUser {
-    userName: string;
-    displayName: string;
+    username: string;
+    displayname: string;
     token: string;
     image?: string;
 }

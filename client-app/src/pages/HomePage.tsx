@@ -23,7 +23,7 @@ export const HomePage = () => {
                 user ? (
 
                     <Fragment>
-                    <Header as='h2' inverted content={`Welcome back ${user.displayName}`} />
+                    <Header as='h2' inverted content={`Welcome back ${user.displayname}`} />
                     <Button as={Link} to='/activities' size='huge' inverted>
                         Go to Activities!
                     </Button>

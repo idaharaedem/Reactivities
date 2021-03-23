@@ -15,10 +15,12 @@ import {format} from 'date-fns';
 
     <Fragment>
        {activitiesByDate.map(([group, activities])=> (
-        <Fragment>
-           <Label size='large' color='teal'>
+        <Fragment key ={group}>
+           <Label size='large' color='orange'>
             {format(group, 'eeee do MMMM')}
            </Label>
+
+           
 
             <Item.Group divided>
                 {activities.map((activity => (

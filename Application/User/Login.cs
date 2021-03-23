@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,10 +64,10 @@ namespace Application.User
 
                     return new User
                     {
-                        DisplayName = user.DisplayName,
+                        Displayname = user.DisplayName,
                         Token = _generator.createToken(user),
-                        UserName = user.UserName,
-                        Image = null
+                        Username = user.UserName,
+                        Image = user.Photos.FirstOrDefault(x => x.isMain)?.Url
                     };
                 }
 

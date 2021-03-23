@@ -14,12 +14,13 @@ import { LoginForm } from "../components/user/LoginForm";
 import { RootStoreContext } from "./stores/rootStore";
 import { Loading } from "./layout/Loading";
 import  ModalComponent  from "../components/modals/ModalComponent";
+import  Profiles  from "../components/Profiles/Profiles";
 
 const App: React.FC <RouteComponentProps> = ({location}) => {
 
   const rootStore = useContext(RootStoreContext);
   const {token, setAppLoaded, appLoaded} = rootStore.commonStore
-  const {getUser} = rootStore.userStore
+  const {getUser, user} = rootStore.userStore
   
 
   useEffect(() => {
@@ -43,12 +44,13 @@ const App: React.FC <RouteComponentProps> = ({location}) => {
       <Route exact path='/' component={HomePage}/>
       
       <Route path={'/(.+)'} render={()=> ( <Fragment>
-        <Navbar/>
+        <Navbar user={user!}/>
         <Container style={{ marginTop: "8em" }}>
           <Switch>
           <Route exact path='/activities' component={ActivityDashboard}/>
           <Route  path='/activities/:id' component={Details}/>
           <Route key={location.key} path={['/createActivity', '/manage/:id']} component={ActivityForm}/>
+          <Route path='/profile/:username' component={Profiles}/>
           <Route path='/user/login' component={LoginForm}/>
           <Route  component={NotFound}/>
           </Switch> 

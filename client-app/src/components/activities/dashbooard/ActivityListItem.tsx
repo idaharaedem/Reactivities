@@ -1,26 +1,52 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Icon, Item, Segment } from 'semantic-ui-react';
+import { Button, Icon, Item, Label, Segment } from 'semantic-ui-react';
 import { IActivity } from '../../../app/models/Activity';
 import {format} from 'date-fns';
+import { ActivityListAttendees } from './ActivityListAttendees';
 
 
 
 
 export const ActivityListItem: React.FC<{activity:IActivity}> = ({activity}) => {
-
+    const host = activity.attendees.filter(x => x.isHost)[0];
 
     return (
         <Segment.Group>
            <Segment clearing>
                 <Item.Group>
                     <Item>
-                    <Item.Image floated='right' size='tiny' circular src='/assets/user.png'/>
+                    <Item.Image floated='right' size='tiny' style={{marginBottom: 5}} circular src={host.image || '/assets/user.png'}/>
                     <Item.Content>
-                        <Item.Header as='a'>{activity.title}</Item.Header>
+                        <Item.Header as={Link} to={`/activities/${activity.id}`}>{activity.title}</Item.Header>
                         
                         <Item.Description>
-                            Hosted by .....
+                            
+                          <Item.Description>
+                            Hosted by <Link to= {`/profile/${host.username}`}> {host.displayname} </Link>
+                            
+                          </Item.Description>
+                            
+                            {activity.isHost &&
+                            <Label 
+                            basic 
+                            color='red' 
+                            content='You are hosting this event'/>
+                            }   
+                           
+                           
+                        </Item.Description>
+
+                        <Item.Description>
+           
+                            {activity.isGoing && !activity.isHost &&
+
+                            <Label 
+                            basic 
+                            color='brown' 
+                            content='You are attending '/>
+                            }   
+                         
                         </Item.Description>
             
                         <Item.Extra>Additional Details</Item.Extra>
@@ -38,7 +64,7 @@ export const ActivityListItem: React.FC<{activity:IActivity}> = ({activity}) => 
             </Segment>
 
             <Segment secondary>
-                Attendees will go here
+                <ActivityListAttendees attendees = {activity.attendees}/>
             </Segment>
 
             <Segment clearing>

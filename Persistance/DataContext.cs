@@ -16,6 +16,8 @@ namespace Persistance
 
         public DbSet<UserActivity> UserActivities { get; set; }
 
+        public DbSet <Photo> Photos { get; set; }
+
 
     //configuring entities as your database is being created
        protected override void OnModelCreating(ModelBuilder builder) 

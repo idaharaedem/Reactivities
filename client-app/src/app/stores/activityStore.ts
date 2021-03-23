@@ -3,8 +3,10 @@ import { SyntheticEvent } from "react";
 import { toast } from "react-toastify";
 import { history } from "../..";
 import agent from "../API/agent";
+import  {checkIfGoingAndHost}  from "../form/common/util/util";
 import { IActivity } from "../models/Activity";
 import { RootStore } from "./rootStore";
+import {createAttendee} from '../form/common/util/util'
 
 
 
@@ -27,6 +29,7 @@ export default class ActivityStore {
      editMode = false;
      activityRegistry = new Map();
      target = '';
+     loading = false;
 
      //Computed
      get activitiesByDate() {
@@ -48,15 +51,19 @@ export default class ActivityStore {
     //actions
      // RuninAction is necessarry for mobx dev tools mode
      loadActivities = async () => {
-         
+         //Getting a reference to check if host or is going
+        
+
          this.loadingInitial = true;
          try {
          let activities = await agent.Activities.lists();
              runInAction(()=> {
                  activities.forEach(activity => {
-                     activity.date = new Date(activity.date);
+                     checkIfGoingAndHost(activity, this.rootStore.userStore.user!);
                      this.activityRegistry.set(activity.id, activity);
                      this.loadingInitial = false;
+                     //console.log(activity);
+
                  });
                 
              }); 
@@ -68,6 +75,9 @@ export default class ActivityStore {
 
     //If you make it async then the return type will be a promise
     loadActivity = async (id:string) => {
+        //Getting a reference to check if host or is going
+ 
+
        let activity = this.activityRegistry.get(id);  
        if(activity) {
            this.selectedActivity = activity;
@@ -78,10 +88,13 @@ export default class ActivityStore {
            try{
             activity = await agent.Activities.details(id);
             runInAction(()=> {
+                checkIfGoingAndHost(activity, this.rootStore.userStore.user!);
                 this.selectedActivity = activity;
                 this.activityRegistry.set(activity.id, activity);
                 this.loadingInitial = false;
+               
                 activity.date = new Date(activity.date);
+                //console.log(activity)
             })
             return activity;
            }
@@ -115,7 +128,13 @@ export default class ActivityStore {
     
         try{
             await agent.Activities.create(activity);
-           runInAction(()=> {
+            const attendee = createAttendee(this.rootStore.userStore.user!);
+            attendee.isHost = true;
+            let attendees = [];
+            attendees.push(attendee);
+            activity.attendees = attendees;
+            activity.isHost = true;
+            runInAction(()=> {
             this.activityRegistry.set(activity.id, activity);
             this.selectedActivity = activity;
             this.submitting = false;
@@ -170,6 +189,56 @@ export default class ActivityStore {
         })
     }
 
+    attendanceActivity = async () => {
+        this.loading = true;
+
+        const newAttendee = createAttendee(this.rootStore.userStore.user!);
+        
+        try {
+            
+            await agent.Activities.attend(this.selectedActivity?.id!); 
+            
+            runInAction(() => {
+                if( this.selectedActivity) 
+                {
+                    
+                    this.selectedActivity.attendees.push(newAttendee);
+                    this.selectedActivity.isGoing = true;
+                    this.activityRegistry.set(this.selectedActivity.id, this.selectedActivity);
+                    this.loading = false;
+                }
+            })
+        }   
+        catch (err) {
+            runInAction(()=> {
+
+            this.loading = false;
+            toast.error('Problem joining said activity');
+            })   
+        }
+    }
+
+    cancelAttendanceActivity = async () => {
+    try {
+        await agent.Activities.unAttend(this.selectedActivity?.id!)
+        runInAction(()=> {
+            if(this.selectedActivity) 
+            {
+            this.selectedActivity.attendees  = this.selectedActivity?.attendees.filter
+            (a => a.username !== this.rootStore.userStore.user?.username);
+            this.selectedActivity.isGoing = false;
+            this.activityRegistry.set(this.selectedActivity.id,this.selectedActivity);
+            this.loading = false;
+            }
+        })
+        }
+        catch(err) {
+            runInAction(()=> {
+                this.loading = false;
+                toast.error('Problem canceling attendance')
+            })
+        }
+    }
 
     cancelSelectedActivity = () => {
         this.selectedActivity = null;
