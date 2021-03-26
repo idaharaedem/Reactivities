@@ -44,9 +44,9 @@ namespace Application.Photos
                     throw new RestException(HttpStatusCode.NotFound, new {Photo = "Image was not found"});
                 }
 
-                // if(specificPhoto.isMain == true) {
-                //     throw new RestException(HttpStatusCode.BadRequest, new {Photo = "Cannot delete main photo"});
-                // }
+                 if(specificPhoto.isMain == true) {
+                     throw new RestException(HttpStatusCode.BadRequest, new {Photo = "Cannot delete main photo"});
+                 }
 
 
                 _photoAccessor.DeletPhoto(specificPhoto.Id);

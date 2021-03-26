@@ -41,10 +41,13 @@ namespace Application.Photos
                     throw new RestException(HttpStatusCode.BadRequest, new {Photo = "notFound"});
                 }
 
-                var currentMain = _context.Photos.FirstOrDefault(x => x.isMain); 
+                var currMain = user.Photos.FirstOrDefault(x => x.isMain); 
+                
+                if(currMain != null){
+                    currMain.isMain = false;
 
-                currentMain.isMain = false;
-
+                }
+                
                 
                 photo.isMain = true;
 

@@ -19,7 +19,10 @@ const panes = [
 
     return (
         <Tab
-        menu={{fluid: true, vertical: false}} menuPosition='right' panes={panes}/>
+        menu={{fluid: true, vertical: false}} menuPosition='right' 
+        panes={panes}
+        activeIndex={1}
+        />
     )
 }
 
