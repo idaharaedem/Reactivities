@@ -47,7 +47,7 @@ const validate = combineValidators({
     const [loading, setLoading] = useState(false)
 
     // because it ran syncroniously if you refreshed the page values would be blank
-//Combat that by setting the activit in the use effect so it runs after
+//Combat that by setting the activity in the use effect so it runs after
     useEffect(()=> {
         if(match.params.id) {
             setLoading(true);

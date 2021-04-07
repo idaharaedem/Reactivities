@@ -1,5 +1,7 @@
 using System.Text;
+using System.Threading.Tasks;
 using API.Middleware;
+using API.SignalR;
 using Application.Activities;
 using Application.interfaces;
 using AutoMapper;
@@ -48,7 +50,7 @@ namespace API
             }).AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<Create>());
             services.AddCors(opt => {
                 opt.AddPolicy("CorsPolicy", policy => {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials();
                 });
             });
                  //Telling mediatR where to look
@@ -89,12 +91,31 @@ namespace API
                     ValidateAudience = false,
                     ValidateIssuer = false
                 };
+                // for the chathub system to gain the token
+                opt.Events = new JwtBearerEvents 
+                {
+                    OnMessageReceived = context => 
+                    {
+                        var accToken = context.Request.Query["access_token"];
+                        //get reference to path
+                        var path = context.HttpContext.Request.Path;
+                        //if we have an access token and it starts with /path
+                        if(!string.IsNullOrEmpty(accToken) && (path.StartsWithSegments("/chat")))
+                        {
+                            context.Token = accToken;
+                        }
+
+                        return Task.CompletedTask;
+
+                    }
+                };
             });
  
             services.AddScoped<IJwttGenerator, JwtGenerator>();
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -127,6 +148,7 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
     }

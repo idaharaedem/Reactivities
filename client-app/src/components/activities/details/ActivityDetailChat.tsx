@@ -1,8 +1,25 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useContext, useEffect } from 'react'
 import { Segment, Header, Form, Button,Comment } from 'semantic-ui-react'
 import { observer } from 'mobx-react-lite';
+import { RootStoreContext } from '../../../app/stores/rootStore';
+import {Form as FinalForm, Field} from 'react-final-form';
+import { Link } from 'react-router-dom';
+import { TextAreaInput } from '../../../app/form/TextAreaInput';
+import { formatDistance } from 'date-fns';
 
  const ActivityDetailChat = () => {
+
+  const rootStore = useContext(RootStoreContext);
+
+  const {createHubConnection,stopHubConnection, addComment, selectedActivity} = rootStore.activityStore;
+
+  useEffect(()=> {
+    createHubConnection();
+    //cleaning up when leaving component
+    return ()=> {
+      stopHubConnection();
+    }
+  },[createHubConnection,stopHubConnection, selectedActivity])
     return (
         <Fragment>
         <Segment
@@ -17,43 +34,44 @@ import { observer } from 'mobx-react-lite';
         </Segment>
         <Segment attached>
           <Comment.Group>
-            <Comment>
-              <Comment.Avatar src='/assets/user.png' />
+            {selectedActivity && selectedActivity.comments &&
+            selectedActivity.comments.map((comment) => (
+              <Comment key = {comment.id}>
+              <Comment.Avatar src={comment.photos || '/assets/user.png'} />
               <Comment.Content>
-                <Comment.Author as='a'>Matt</Comment.Author>
+                <Comment.Author as={Link} to={`/profile/${comment.username}`}> {comment.displayName} </Comment.Author>
                 <Comment.Metadata>
-                  <div>Today at 5:42PM</div>
+                  <div>{formatDistance(comment.createdAt, new Date)}</div>
                 </Comment.Metadata>
-                <Comment.Text>How artistic!</Comment.Text>
-                <Comment.Actions>
+                <Comment.Text>{comment.body}</Comment.Text>
+                {/* <Comment.Actions>
                   <Comment.Action>Reply</Comment.Action>
-                </Comment.Actions>
+                </Comment.Actions> */}
               </Comment.Content>
             </Comment>
-  
-            <Comment>
-              <Comment.Avatar src='/assets/user.png' />
-              <Comment.Content>
-                <Comment.Author as='a'>Joe Henderson</Comment.Author>
-                <Comment.Metadata>
-                  <div>5 days ago</div>
-                </Comment.Metadata>
-                <Comment.Text>Dude, this is awesome. Thanks so much</Comment.Text>
-                <Comment.Actions>
-                  <Comment.Action>Reply</Comment.Action>
-                </Comment.Actions>
-              </Comment.Content>
-            </Comment>
-  
-            <Form reply>
-              <Form.TextArea />
+            ))}
+
+            <FinalForm
+            onSubmit={addComment}
+            render={({handleSubmit, submitting, form}) => (
+              <Form onSubmit={()=> handleSubmit()!.then(()=> form.reset())}>
+              <Field
+                name='body'
+                component={TextAreaInput}
+                rows={3}
+                placeholder='Enter your comment'
+              />
               <Button
                 content='Add Reply'
                 labelPosition='left'
                 icon='edit'
-                color='olive'
+                color='grey'
+                loading={submitting}
               />
             </Form>
+            )}
+              />
+
           </Comment.Group>
         </Segment>
       </Fragment>

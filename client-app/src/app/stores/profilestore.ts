@@ -18,6 +18,7 @@ export default class ProfileStore {
     uploadingPhoto = false;
     setMainLoading = false;
     setDeleteLoading = false;
+    bioLoader = false;
 
     //computed
     get isCurrentUser() {
@@ -123,5 +124,26 @@ export default class ProfileStore {
             })
         }
     }
+
+    editUserDetails = async (profile: IProfile) => {
+        this.bioLoader = true;
+        try {
+             await agent.Profiles.editProfile(profile);
+            runInAction(()=> {
+                this.rootStore.userStore.user!.displayname = profile.displayName;
+                //take all the old properties of this.profile and overwrite them with the new properties
+                this.profile = {...this.profile, ...profile}
+                this.bioLoader = false;
+                
+            })
+        }
+
+        catch (error) {
+            console.log(error);
+            toast.error('problem with updating information');
+            this.bioLoader = false
+        }
+    }
+
 
 }

@@ -13,5 +13,9 @@ namespace Domain
 
         //One to many relationship
         public virtual ICollection<Photo> Photos {get; set;}
+
+        public virtual ICollection<UserFollowing> Followers { get; set; }
+
+        public virtual ICollection<UserFollowing> Following { get; set; }
     }
 }

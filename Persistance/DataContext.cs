@@ -18,6 +18,11 @@ namespace Persistance
 
         public DbSet <Photo> Photos { get; set; }
 
+        public DbSet<Comments> Comments { get; set; }
+
+        //getting the user followings directly rather than going through a navigation property
+        public DbSet<UserFollowing> Followings { get; set; }
+
 
     //configuring entities as your database is being created
        protected override void OnModelCreating(ModelBuilder builder) 
@@ -42,7 +47,22 @@ namespace Persistance
             .HasOne(a => a.Activity)
             .WithMany(u => u.UserActivities)
             .HasForeignKey(a => a.ActivityId);
-       }
+
+            builder.Entity<UserFollowing>(b => 
+            {
+                b.HasKey(k => new {k.ObserverId, k.TargetId});
+                b.HasOne(o => o.Observer)
+                .WithMany(f => f.Following)
+                .HasForeignKey(o => o.ObserverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasOne(o => o.Target)
+                .WithMany(f => f.Followers)
+                .HasForeignKey(t => t.TargetId)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+       }  
 
     }
 }

@@ -20,5 +20,13 @@ namespace API.Controllers
         {
             return await _mediator.Send(new Details.Query{Username = username});
         }
+
+        [HttpPut]
+        public async Task<ActionResult<Unit>> UpdateProfileDetails(Bio.Command command) 
+        {
+            //command.Username = username;
+            return await _mediator.Send(command);
+        }
+
     }
 }

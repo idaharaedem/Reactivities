@@ -7,6 +7,7 @@ import  {checkIfGoingAndHost}  from "../form/common/util/util";
 import { IActivity } from "../models/Activity";
 import { RootStore } from "./rootStore";
 import {createAttendee} from '../form/common/util/util'
+import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 
 
@@ -30,6 +31,7 @@ export default class ActivityStore {
      activityRegistry = new Map();
      target = '';
      loading = false;
+     hubConnection: HubConnection | null = null
 
      //Computed
      get activitiesByDate() {
@@ -49,6 +51,49 @@ export default class ActivityStore {
     
 
     //actions
+
+    //We are not able to send our token as http headers so we use this protocol for chathub
+     createHubConnection = () => {
+         this.hubConnection = new HubConnectionBuilder() 
+            .withUrl('http://localhost:5000/chat', {
+                accessTokenFactory: () => this.rootStore.commonStore.token!
+            })
+            .configureLogging(LogLevel.Information)
+            .build();
+
+            this.hubConnection.start()
+            .then(()=> {
+                console.log(this.hubConnection!.state)
+            })
+
+            .catch(error => {
+                console.log(error)
+            }) 
+            //tell it what to do when recieving a comment
+            this.hubConnection.on("CommentReceived", comment => {
+                runInAction(()=> {
+                    this.selectedActivity!.comments.push(comment);
+                })
+            })
+
+     }
+
+     stopHubConnection = () => {
+        
+            this.hubConnection?.stop();
+     }
+
+     addComment = async (values: any) => {
+         values.activityId = this.selectedActivity?.id 
+
+         try {
+            await this.hubConnection!.invoke('SendComment', values)
+         }
+         catch (error) {
+            console.log(error);
+         }
+     }
+
      // RuninAction is necessarry for mobx dev tools mode
      loadActivities = async () => {
          //Getting a reference to check if host or is going
@@ -134,6 +179,7 @@ export default class ActivityStore {
             attendees.push(attendee);
             activity.attendees = attendees;
             activity.isHost = true;
+            activity.comments = [];
             runInAction(()=> {
             this.activityRegistry.set(activity.id, activity);
             this.selectedActivity = activity;

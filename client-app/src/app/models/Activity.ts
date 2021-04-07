@@ -8,6 +8,7 @@ export interface IActivity
     city : string;
     venue : string;
     attendees: IAttendee[];
+    comments: IComment[]
     //For currently logged in user
     isGoing: boolean;
     isHost: boolean;
@@ -43,4 +44,15 @@ export interface IAttendee {
     displayname: string;
     image: string;
     isHost: boolean;
+}
+
+//has to now be the dto properties since youre getting it from client side
+export interface IComment {
+    id: string,
+    body: string,
+    createdAt: Date,
+    username: string,
+    displayName: string,
+    photos: string
+
 }
