@@ -44,6 +44,7 @@ export interface IAttendee {
     displayname: string;
     image: string;
     isHost: boolean;
+    following?: boolean;
 }
 
 //has to now be the dto properties since youre getting it from client side

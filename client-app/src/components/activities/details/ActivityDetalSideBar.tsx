@@ -39,7 +39,7 @@ attendees: IAttendee[];
                 <Item.Header as='h3'>
                   <Link to={`/profile/${attendee.username}`}> {attendee.displayname}</Link>
                 </Item.Header>
-                <Item.Extra style={{ color: 'orange' }}>Attending</Item.Extra>
+                <Item.Extra style={{ color: 'orange' }}> {attendee.following ? 'Following' : ''}</Item.Extra>
               </Item.Content>
             </Item>
             ))}

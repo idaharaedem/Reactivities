@@ -4,6 +4,7 @@ using API.Middleware;
 using API.SignalR;
 using Application.Activities;
 using Application.interfaces;
+using Application.Profiles;
 using AutoMapper;
 using Domain;
 using FluentValidation.AspNetCore;
@@ -116,6 +117,7 @@ namespace API
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
             services.AddSignalR();
+            services.AddScoped<IProfileReader, ProfileReader>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

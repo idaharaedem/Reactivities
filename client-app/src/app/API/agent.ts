@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { request } from 'http';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 import {IActivity} from '../models/Activity'
@@ -84,7 +85,11 @@ const Profiles = {
     uploadUserPhoto: (photo: Blob): Promise<IPhoto> => requests.postForm(`/photos`, photo),
     setMainPhoto: (id: string) => requests.post(`/photos/${id}/setmain`, {}),
     deletPhoto: (id:string) => requests.delete(`/photos/${id}`),
-    editProfile: (profile: IProfile) => requests.put(`/profile`, profile)
+    editProfile: (profile: IProfile) => requests.put(`/profile`, profile),
+    follow: (username: string) => requests.post(`/profiles/${username}/follow`, {}),
+    unfollow: (username:string) => requests.delete(`/profiles/${username}/follow`),
+    listFollowings: (username: string, listReturn: string) : Promise<IProfile[]> => 
+    requests.get(`/profiles/${username}/follow?listReturn=${listReturn}`)
 }
 
 export default {
