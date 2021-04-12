@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Activities;
+using Application.Profiles;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,9 +22,10 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ActivitityDTO>>> ActivityList () 
+        //optional paramaters being passed and if nothing is passed the default values are set
+        public async Task<ActionResult<List.ActivitiesEnvelope>> ActivityList(int? limit, int? offset, bool isGoing, bool isHost, DateTime? startDate) 
         {
-            return await _mediator.Send(new List.Query());
+            return await _mediator.Send(new List.Query(limit, offset, isGoing, isHost, startDate));
         }
 
         [HttpGet("{id}")]
@@ -65,5 +67,7 @@ namespace API.Controllers
         {
             return await _mediator.Send(new UnAttend.Command{Id = id});
         }
+
+      
     }
 }

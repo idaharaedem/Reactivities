@@ -132,7 +132,7 @@ const handleFinalFormSubmit = (values: any) => {
                     <Field
                     name="time"
                     time ={true} 
-                    placeholder = "Date" 
+                    placeholder = "Time" 
                     value = {activity.date}
                     component={DateInput}
                     />

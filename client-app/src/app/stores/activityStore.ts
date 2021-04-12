@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction} from "mobx";
+import { makeAutoObservable, reaction, runInAction} from "mobx";
 import { SyntheticEvent } from "react";
 import { toast } from "react-toastify";
 import { history } from "../..";
@@ -9,7 +9,7 @@ import { RootStore } from "./rootStore";
 import {createAttendee} from '../form/common/util/util'
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
-
+const LIMIT = 4;
 
 //This is a class property
 export default class ActivityStore {
@@ -20,6 +20,15 @@ export default class ActivityStore {
         makeAutoObservable(this);
         //Will be able to access our rootStore via our activity store
         this.rootStore = rootStore 
+
+        reaction(
+            () => this.predicate.keys(),
+            () => {
+                this.pageNumber = 0;
+                this.activityRegistry.clear();
+                this.loadActivities();
+            }
+        )
     }
 
     //observables
@@ -31,7 +40,26 @@ export default class ActivityStore {
      activityRegistry = new Map();
      target = '';
      loading = false;
-     hubConnection: HubConnection | null = null
+     hubConnection: HubConnection | null = null;
+     activityCount = 0;
+     pageNumber = 0
+     predicate = new Map();
+
+     setPredicate = (predicate: string, value: string | Date) => {
+         this.predicate.clear();
+         if(predicate !== 'all'){
+             this.predicate.set(predicate, value);
+         }
+     }
+
+
+     get totalPages() {
+         return Math.ceil(this.activityCount / LIMIT);
+     }
+
+     setPageNumber = (page : number) => {
+         this.pageNumber = page;
+     }
 
      //Computed
      get activitiesByDate() {
@@ -94,20 +122,39 @@ export default class ActivityStore {
          }
      }
 
+
+    get axiosParamaters() {
+        //Interface that defines methods to work with a query string of a URL
+        const params = new URLSearchParams();
+        params.append('limit', String(LIMIT));
+        params.append('offset', `${this.pageNumber ? this.pageNumber * LIMIT : 0}`);
+        this.predicate.forEach((value, key)=> {
+            if(key === 'startDate') {
+                //value will be our date
+                params.append(key, value.toISOString())
+            }
+            else {
+                params.append(key, value);
+            }
+        })
+        return params;
+    }
+
      // RuninAction is necessarry for mobx dev tools mode
      loadActivities = async () => {
          //Getting a reference to check if host or is going
-        
 
          this.loadingInitial = true;
          try {
-         let activities = await agent.Activities.lists();
+         let activitiesEnv = await agent.Activities.lists(this.axiosParamaters);
+         const {activities, activityCount} = activitiesEnv
              runInAction(()=> {
-                 activities.forEach(activity => {
+                activities.forEach(activity => {
                      checkIfGoingAndHost(activity, this.rootStore.userStore.user!);
                      this.activityRegistry.set(activity.id, activity);
                      this.loadingInitial = false;
                      //console.log(activity);
+                     this.activityCount = activityCount;
 
                  });
                 

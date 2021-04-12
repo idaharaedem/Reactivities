@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Profiles;
 using MediatR;
@@ -18,7 +19,7 @@ namespace API.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<Profile>> GetProfile(string username)
         {
-            return await _mediator.Send(new Details.Query{Username = username});
+            return await _mediator.Send(new Detailss.Query{Username = username});
         }
 
         [HttpPut]
@@ -26,6 +27,12 @@ namespace API.Controllers
         {
             //command.Username = username;
             return await _mediator.Send(command);
+        }
+
+          [HttpGet("{username}/activities")]
+        public async Task<ActionResult<List<UserActivityDTO>>> GetUsersActivities (string username, string predicate) 
+        {
+            return await _mediator.Send(new ListActivities.Query{Username = username, Predicate = predicate});  
         }
 
     }

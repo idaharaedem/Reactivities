@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect } from 'react'
+import { Fragment, useContext, useEffect } from 'react'
 import { Segment, Header, Form, Button,Comment } from 'semantic-ui-react'
 import { observer } from 'mobx-react-lite';
 import { RootStoreContext } from '../../../app/stores/rootStore';

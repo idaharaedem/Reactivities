@@ -1,7 +1,7 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { toast } from "react-toastify";
 import agent from "../API/agent";
-import { IPhoto, IProfile } from "../models/Profile";
+import { IPhoto, IProfile, IUsersActivities } from "../models/Profile";
 import { RootStore } from "./rootStore";
 
 export default class ProfileStore {
@@ -32,8 +32,10 @@ export default class ProfileStore {
     setMainLoading = false;
     setDeleteLoading = false;
     bioLoader = false;
-    followings: IProfile[] = []
+    followings: IProfile[] = [];
+    loadingActivities: boolean = false;
     activeTab: number = 0;
+    usersActivities: IUsersActivities[] = [];
 
     setActiveTab = (activeIndex: number) => {
         this.activeTab = activeIndex;
@@ -221,6 +223,26 @@ export default class ProfileStore {
             })
             toast.error('problem loading');
             console.log(error);
+        }
+    }
+
+    loadUserActivities = async (username: string, predicate?: string) => {
+        this.loadingActivities = false;
+
+        try {
+
+            const activities = await agent.Profiles.listProfileActivities(username, predicate!)
+            runInAction(()=> {
+                this.loadingActivities = false;
+                this.usersActivities = activities;
+            })
+        }
+        catch(error)  {
+            console.log(error);
+            toast.error('Problem loading users activities')
+            runInAction(()=> {
+                this.loadingActivities = false
+            })
         }
     }
 

@@ -10,7 +10,7 @@ using Persistance;
 
 namespace Application.Profiles
 {
-    public class Details
+    public class Detailss
     {
         public class Query : IRequest<Profile>
         {

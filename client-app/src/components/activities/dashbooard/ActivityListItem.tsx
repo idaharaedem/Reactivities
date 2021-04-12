@@ -14,7 +14,7 @@ export const ActivityListItem: React.FC<{activity:IActivity}> = ({activity}) => 
     return (
         <Segment.Group>
            <Segment clearing>
-                <Item.Group>
+                <Item.Group >
                     <Item>
                     <Item.Image floated='right' size='tiny' style={{marginBottom: 5}} circular src={host.image || '/assets/user.png'}/>
                     <Item.Content>
@@ -49,7 +49,7 @@ export const ActivityListItem: React.FC<{activity:IActivity}> = ({activity}) => 
                          
                         </Item.Description>
             
-                        <Item.Extra>Additional Details</Item.Extra>
+                        <Item.Extra> {activity.description} </Item.Extra>
                     </Item.Content>
                     </Item>
                 </Item.Group>
@@ -68,7 +68,7 @@ export const ActivityListItem: React.FC<{activity:IActivity}> = ({activity}) => 
             </Segment>
 
             <Segment clearing>
-                <span>{activity.description}</span>
+                {/* <span>{activity.description}</span> */}
                 <Button as={Link} to={`/activities/${activity.id}`} 
                 floated='right'
                 content='View' 

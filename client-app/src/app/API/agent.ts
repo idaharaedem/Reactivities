@@ -1,8 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
-import { request } from 'http';
 import { toast } from 'react-toastify';
 import { history } from '../..';
-import {IActivity} from '../models/Activity'
+import {IActivitiesEnvelope, IActivity} from '../models/Activity'
 import { IPhoto, IProfile } from '../models/Profile';
 import { IUser, IUserFormValues } from '../models/User';
 
@@ -65,7 +64,8 @@ const requests = {
 }
 
 const Activities = {
-    lists: (): Promise<IActivity[]> => requests.get('/activities'),
+    //need to use axios directly to pass a configuration object
+    lists: (params:URLSearchParams): Promise<IActivitiesEnvelope> => axios.get('/activities', {params: params}).then(sleep(1000)).then(responseBody),
     details: (id:string) => requests.get(`/activities/${id}`),
     create: (activity: IActivity) => requests.post(`/activities`, activity),
     update: (id:string, activity: IActivity) => requests.put(`/activities/${id}`, activity),
@@ -89,7 +89,9 @@ const Profiles = {
     follow: (username: string) => requests.post(`/profiles/${username}/follow`, {}),
     unfollow: (username:string) => requests.delete(`/profiles/${username}/follow`),
     listFollowings: (username: string, listReturn: string) : Promise<IProfile[]> => 
-    requests.get(`/profiles/${username}/follow?listReturn=${listReturn}`)
+    requests.get(`/profiles/${username}/follow?listReturn=${listReturn}`),
+    listProfileActivities: (username:string, predicate: string) => requests
+    .get(`/profile/${username}/activities?predicate=${predicate}`)
 }
 
 export default {

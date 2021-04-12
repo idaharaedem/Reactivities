@@ -31,7 +31,7 @@ export const LoginForm = () => {
             render={({handleSubmit, submitError, invalid, pristine, dirtySinceLastSubmit}) => (
 
                 <Form onSubmit={handleSubmit} error>
-                    <Header color='blue' content='Login to your activities' as='h2' textAlign='center'/>
+                    <Header color='orange' content='Login to your activities' as='h2' textAlign='center'/>
                     <Field
                         name='email'
                         placeholder='Please enter email'
@@ -47,7 +47,7 @@ export const LoginForm = () => {
 
                     {submitError && !dirtySinceLastSubmit && <ErrorMessage error={submitError} text='Invalid Username or Password'/>}
               
-                    <Button fluid disabled = { (invalid && !dirtySinceLastSubmit) || pristine} color='blue' content='Login' type='submit'/>
+                    <Button fluid disabled = { (invalid && !dirtySinceLastSubmit) || pristine} color='red' content='Login' type='submit'/>
                 </Form>
             )}
         />

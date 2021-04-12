@@ -1,9 +1,11 @@
-import React, {useEffect, useContext} from 'react';
-import { Grid, GridColumn} from 'semantic-ui-react';
+import React, {useEffect, useContext, useState} from 'react';
+import { Grid, GridColumn, Loader} from 'semantic-ui-react';
 import  ActivityList  from './ActivityList';
 import { observer } from 'mobx-react-lite';
-import {Loading} from '../../../app/layout/Loading'
 import { RootStoreContext } from '../../../app/stores/rootStore';
+import InfiniteScroll from 'react-infinite-scroller';
+import ActivityFilters from './ActivityFilters';
+import ListItemPlaceholder from './ListItemPlaceholder';
 
 
 //React.FC identifies the type of component youre passing through
@@ -14,7 +16,15 @@ import { RootStoreContext } from '../../../app/stores/rootStore';
 
         const rootStore = useContext(RootStoreContext)
 
-        const {loadActivities, loadingInitial} = rootStore.activityStore;
+        const {loadActivities, loadingInitial, totalPages, setPageNumber, pageNumber} = rootStore.activityStore;
+
+        const[loadingNext, setLoadingNext] = useState(false);
+
+        const handleNext = () => {
+          setLoadingNext(true);
+          setPageNumber(pageNumber + 1);
+          loadActivities().then(()=> setLoadingNext(false))
+        }
 
         useEffect(() => {
           //have to tell use effect about the dependencies it needs, you put that in the empty array
@@ -22,17 +32,31 @@ import { RootStoreContext } from '../../../app/stores/rootStore';
           // Empty array ensures our use effect runs one time only
         }, [loadActivities]);
       
-        if (loadingInitial) return <Loading content = {'Loading activities'}/>
-      
+    
 
     return (
         <Grid>
             <Grid.Column width={10}>
-              <ActivityList />
-              
+              {
+                loadingInitial && pageNumber === 0 ? <ListItemPlaceholder/> : 
+                (
+                  <InfiniteScroll
+                  pageStart={0}
+                  loadMore={handleNext}
+                  hasMore={!loadingNext && pageNumber + 1 < totalPages}
+                  initialLoad={false}
+                  >
+                    <ActivityList />
+                  </InfiniteScroll>
+                )
+              }
+            
             </Grid.Column>
             <GridColumn width={6}>  
-               <h2>Activity filters</h2>
+               <ActivityFilters/>
+            </GridColumn>
+            <GridColumn width={10}>  
+               <Loader active={loadingNext}/>
             </GridColumn>
         </Grid>
     )

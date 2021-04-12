@@ -1,10 +1,9 @@
-import { profile } from 'console'
 import { observer } from 'mobx-react-lite'
 import {Tab} from 'semantic-ui-react'
-import { IProfile } from '../../app/models/Profile'
 import { ProfileAboutUs } from './ProfileAboutUs'
 import ProfileFollowings from './ProfileFollowings'
 import ProfileUserPhotos from './profileUserPhotos'
+import ProfileUserActivities from './ProfileUserActivities'
 
 
 
@@ -16,7 +15,7 @@ interface IProps {
 const panes = [
     {menuItem: 'About', render: ()=> <ProfileAboutUs />},
     {menuItem: 'Photos', render: ()=> <ProfileUserPhotos/>},
-    {menuItem: 'Activities', render: ()=> <Tab.Pane> Activities content </Tab.Pane>},
+    {menuItem: 'Activities', render: ()=> <ProfileUserActivities/>},
     {menuItem: 'Followers', render: ()=> <ProfileFollowings/>},
     {menuItem: 'Following', render: ()=> <ProfileFollowings/>}
 ]

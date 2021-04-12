@@ -59,14 +59,15 @@ namespace Application.User
                 }
 
                  if(userName) {
-                    throw new RestException(HttpStatusCode.BadRequest, new {UserName = "UserName already in use"});
+                    throw new RestException(HttpStatusCode.BadRequest, new {UserName = "Username already in use"});
                 }
 
                 var user = new AppUser {
 
                     DisplayName = request.DisplayName,
+                    UserName = request.UserName,
                     Email = request.Email,
-                    UserName = request.UserName  
+                     
                 };
 
                 var result = await _userManager.CreateAsync(user, request.Password);
@@ -77,7 +78,7 @@ namespace Application.User
                     {
                         Displayname = user.DisplayName,
                         Token = _generator.createToken(user),
-                        Image = user.Photos.FirstOrDefault(x => x.isMain)?.Url,
+                        //Image = user.Photos.FirstOrDefault(x => x.isMain)?.Url,
                         Username = request.UserName
                     };
                 }
