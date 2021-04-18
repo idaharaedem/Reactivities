@@ -34,16 +34,23 @@ namespace API
             Configuration = configuration;
         }
 
+        //creating specific services for my sql, sqllite etc
+       
         public IConfiguration Configuration { get; }
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext> (options => {
+                services.AddDbContext<DataContext> (options => {
+
                 options.UseLazyLoadingProxies();
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+                
+                options.UseSqlite((Configuration.GetConnectionString("DefaultConnection"))); 
+
                 
             });
+        
             services.AddControllers(opt => {
                 //allowing the authoization throughout the program
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
@@ -137,7 +144,12 @@ namespace API
 
             // app.UseHttpsRedirection();
 
+          
+
             app.UseRouting();
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseCors("CorsPolicy");
 
@@ -151,6 +163,7 @@ namespace API
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapFallbackToController("Index", "Fallbac");
             });
         }
     }

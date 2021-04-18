@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Button, Container, Dropdown, Image, Menu } from 'semantic-ui-react';
 import { IUser } from '../../app/models/User';
+import { history } from "../..";
 import { RootStoreContext } from '../../app/stores/rootStore';
 
 interface IProps {
@@ -15,15 +16,21 @@ interface IProps {
 
     const {isLoggedIn, user, logout} = rootStore.userStore
 
+    const reload = () => {
+        history.push('/activities')
+        window.location.reload();
+    }
+
+  
+
     return (
         <Menu fixed='top' inverted>  
             <Container>
             <Menu.Item header as={NavLink} exact to= '/'>
-                <img className="img" src="/assets/logo.png" alt="logo"/>
                Events
             </Menu.Item>
 
-            <Menu.Item name='activities' as={NavLink} to='/activities'>
+            <Menu.Item onClick={()=>reload()}  name='activities'>
             </Menu.Item>
 
             <Menu.Item>

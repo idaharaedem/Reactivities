@@ -83,7 +83,7 @@ export default class ActivityStore {
     //We are not able to send our token as http headers so we use this protocol for chathub
      createHubConnection = () => {
          this.hubConnection = new HubConnectionBuilder() 
-            .withUrl('http://localhost:5000/chat', {
+            .withUrl( process.env.REACT_APP_API_CHAT_URL!, {
                 accessTokenFactory: () => this.rootStore.commonStore.token!
             })
             .configureLogging(LogLevel.Information)
@@ -254,6 +254,7 @@ export default class ActivityStore {
                 this.selectedActivity = activity;
                 this.submitting = false;
                 history.push(`/activities/${activity.id}`)
+                window.location.reload();
             })
         }
         catch(err) {
@@ -266,13 +267,13 @@ export default class ActivityStore {
     }
     
     // Giving each delete a unique id for the loading spinner
-    deleteActivity = (event: SyntheticEvent<HTMLButtonElement> , id:string) => {
+    deleteActivity = (id:string) => {
         this.submitting = true;
-        this.target = event.currentTarget.name;
         agent.Activities.delete(id)
         .then(() => {
             this.activityRegistry.delete(id);
             this.target = '';
+            history.push(`/activities/`)
           
         }).catch((err)=> {
             console.log(err);

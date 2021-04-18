@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Icon, Item, Label, Segment } from 'semantic-ui-react';
 import { IActivity } from '../../../app/models/Activity';
 import {format} from 'date-fns';
 import { ActivityListAttendees } from './ActivityListAttendees';
+import { RootStoreContext } from '../../../app/stores/rootStore';
 
 
 
 
 export const ActivityListItem: React.FC<{activity:IActivity}> = ({activity}) => {
     const host = activity.attendees.filter(x => x.isHost)[0];
+
+    const rootStore = useContext(RootStoreContext);
+
+    const {profile} = rootStore.profileStore;
 
     return (
         <Segment.Group>
@@ -26,6 +31,8 @@ export const ActivityListItem: React.FC<{activity:IActivity}> = ({activity}) => 
                             Hosted by <Link to= {`/profile/${host.username}`}> {host.displayname} </Link>
                             
                           </Item.Description>
+
+                          
                             
                             {activity.isHost &&
                             <Label 
@@ -49,7 +56,7 @@ export const ActivityListItem: React.FC<{activity:IActivity}> = ({activity}) => 
                          
                         </Item.Description>
             
-                        <Item.Extra> {activity.description} </Item.Extra>
+                        
                     </Item.Content>
                     </Item>
                 </Item.Group>
@@ -73,6 +80,8 @@ export const ActivityListItem: React.FC<{activity:IActivity}> = ({activity}) => 
                 floated='right'
                 content='View' 
                 color='olive'/>
+
+                <Item.Extra color="blue"> {activity.description} </Item.Extra>
 
             </Segment>
         </Segment.Group>

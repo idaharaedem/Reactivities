@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import React, { useContext } from 'react';
-import { Button, Item, Segment, Image, Header } from 'semantic-ui-react';
+import { Button, Item, Segment, Image, Header, ButtonGroup } from 'semantic-ui-react';
 import { IActivity } from '../../../app/models/Activity';
 import { Link } from 'react-router-dom';
 import {format} from 'date-fns'
@@ -26,7 +26,7 @@ const activityImageStyle = {
 
 
   const rootStore = useContext(RootStoreContext);
-  const { cancelAttendanceActivity,attendanceActivity, loading} = rootStore.activityStore;
+  const { cancelAttendanceActivity, attendanceActivity, loading, deleteActivity, target} = rootStore.activityStore;
 
   const host = activity.attendees.filter(x => x.isHost)[0];
     
@@ -35,7 +35,7 @@ const activityImageStyle = {
     return (
     <Segment.Group>
       <Segment basic attached='top' style={{ padding: '0' }}>
-        <Image src={`/assets/categoryImages/${activity.category}.jpg`} fluid style={activityImageStyle} />
+        <Image src={`/assets/categoryImages/${activity.category}.jpeg`} fluid style={activityImageStyle} />
         <Segment style={activityImageTextStyle} basic>
           <Item.Group>
             <Item>
@@ -57,9 +57,18 @@ const activityImageStyle = {
       <Segment clearing attached='bottom'>
         {
           activity.isHost ? (
-            <Button as={Link} to={()=>`/manage/${activity.id}`} color='black' floated='right'>
-            Manage Event
-          </Button>
+            <ButtonGroup >
+              <Button as={Link} to={()=>`/manage/${activity.id}`} color='black' floated='right'>
+                Manage Event
+              </Button>
+
+              <Button onClick={()=> deleteActivity(activity.id)} color='red' floated='right'>
+                Delete Event
+              </Button>
+            </ButtonGroup>
+            
+
+          
           ) : activity.isGoing ? (
 
             <Button loading={loading} onClick={cancelAttendanceActivity}>Cancel attendance</Button>

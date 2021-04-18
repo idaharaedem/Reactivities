@@ -84,6 +84,7 @@ const handleFinalFormSubmit = (values: any) => {
     }
 };
 
+
     return (
         <Grid>
             <Grid.Column width={10}>
@@ -139,7 +140,6 @@ const handleFinalFormSubmit = (values: any) => {
 
                     </Form.Group>
 
-                    
                     <Field
                     name="city" 
                     placeholder= "City" 
@@ -158,9 +158,9 @@ const handleFinalFormSubmit = (values: any) => {
                     {
                         activity.id 
                         ? 
-                        <Button onClick={()=> history.push(`/activities/${activity.id}`)} type="button" floated="right" content="Cancel" color="grey" disabled={loading || invalid || pristine} />
+                        <Button onClick={()=> history.push(`/activities/${activity.id}`)} type="button" floated="right" content="Cancel" color="grey" disabled={loading || invalid } />
                         :
-                        <Button onClick={()=> history.push(`/activities/`)} type="button" floated="right" content="Cancel" color="grey" disabled={loading || invalid || pristine}/>
+                        <Button onClick={()=> history.push(`/activities/`)} type="button" floated="right" content="Cancel" color="grey" disabled={loading || invalid }/>
                     }
                    
                 </Form>

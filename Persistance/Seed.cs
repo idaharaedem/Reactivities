@@ -15,12 +15,19 @@ namespace Persistance
             {
                 var users = new List<AppUser>
                 {
+                     new AppUser
+                    {
+                        Id = "d",
+                        DisplayName = "Abigail",
+                        UserName = "abigail",
+                        Email = "abigail@test.com"
+                    },
                     new AppUser
                     {
                         Id = "a",
-                        DisplayName = "Bob",
-                        UserName = "bob",
-                        Email = "bob@test.com"
+                        DisplayName = "Jacob",
+                        UserName = "jacob",
+                        Email = "jacob@test.com"
                     },
                     new AppUser
                     {
@@ -32,9 +39,9 @@ namespace Persistance
                     new AppUser
                     {
                         Id = "c",
-                        DisplayName = "Tom",
-                        UserName = "tom",
-                        Email = "tom@test.com"
+                        DisplayName = "Lewis",
+                        UserName = "lewis",
+                        Email = "lewis@test.com"
                     },
                 };
 
@@ -50,12 +57,12 @@ namespace Persistance
                 {
                     new Activity
                     {
-                        Title = "Past Activity 1",
+                        Title = "The Dance Off",
                         Date = DateTime.Now.AddMonths(-2),
-                        Description = "Activity 2 months ago",
-                        Category = "drinks",
-                        City = "London",
-                        Venue = "Pub",
+                        Description = "Dancing all night long for several hours",
+                        Category = "music",
+                        City = "Paris",
+                        Venue = "Dubliners",
                         UserActivities = new List<UserActivity>
                         {
                             new UserActivity
@@ -84,7 +91,7 @@ namespace Persistance
                             },
                             new UserActivity
                             {
-                                AppUserId = "a",
+                                AppUserId = "c",
                                 IsHost = false,
                                 Date = DateTime.Now.AddMonths(-1)
                             },
@@ -92,10 +99,10 @@ namespace Persistance
                     },
                     new Activity
                     {
-                        Title = "Future Activity 1",
+                        Title = "Skate night",
                         Date = DateTime.Now.AddMonths(1),
-                        Description = "Activity 1 month in future",
-                        Category = "music",
+                        Description = "Activity in the sport ring",
+                        Category = "sport",
                         City = "London",
                         Venue = "Wembly Stadium",
                         UserActivities = new List<UserActivity>
@@ -108,7 +115,7 @@ namespace Persistance
                             },
                             new UserActivity
                             {
-                                AppUserId = "a",
+                                AppUserId = "d",
                                 IsHost = false,
                                 Date = DateTime.Now.AddMonths(1)
                             },
@@ -116,12 +123,12 @@ namespace Persistance
                     },
                     new Activity
                     {
-                        Title = "Future Activity 2",
+                        Title = "Activity gathering",
                         Date = DateTime.Now.AddMonths(2),
-                        Description = "Activity 2 months in future",
-                        Category = "food",
-                        City = "London",
-                        Venue = "Jamies Italian",
+                        Description = "gathering together with all our friends",
+                        Category = "gathering",
+                        City = "UK",
+                        Venue = "Loo Stadium",
                         UserActivities = new List<UserActivity>
                         {
                             new UserActivity
@@ -132,6 +139,12 @@ namespace Persistance
                             },
                             new UserActivity
                             {
+                                AppUserId = "b",
+                                IsHost = false,
+                                Date = DateTime.Now.AddMonths(2)
+                            },
+                             new UserActivity
+                            {
                                 AppUserId = "a",
                                 IsHost = false,
                                 Date = DateTime.Now.AddMonths(2)
@@ -140,12 +153,12 @@ namespace Persistance
                     },
                     new Activity
                     {
-                        Title = "Future Activity 3",
+                        Title = "Movie Night",
                         Date = DateTime.Now.AddMonths(3),
-                        Description = "Activity 3 months in future",
-                        Category = "drinks",
-                        City = "London",
-                        Venue = "Pub",
+                        Description = "Watching moviies with our favourite friends",
+                        Category = "movies",
+                        City = "Cape Town",
+                        Venue = "West",
                         UserActivities = new List<UserActivity>
                         {
                             new UserActivity
@@ -164,12 +177,12 @@ namespace Persistance
                     },
                     new Activity
                     {
-                        Title = "Future Activity 4",
+                        Title = "All night drink fest",
                         Date = DateTime.Now.AddMonths(4),
-                        Description = "Activity 4 months in future",
-                        Category = "culture",
-                        City = "London",
-                        Venue = "British Museum",
+                        Description = "If youre brave enough to get your drink on then come through",
+                        Category = "drinks",
+                        City = "Dublin",
+                        Venue = "Dublin Museum",
                         UserActivities = new List<UserActivity>
                         {
                             new UserActivity
@@ -182,12 +195,12 @@ namespace Persistance
                     },
                     new Activity
                     {
-                        Title = "Future Activity 5",
+                        Title = "Traveling all over Asia",
                         Date = DateTime.Now.AddMonths(5),
-                        Description = "Activity 5 months in future",
-                        Category = "drinks",
-                        City = "London",
-                        Venue = "Punch and Judy",
+                        Description = "Whoever wants to travel and see the world with me. Come through",
+                        Category = "travel",
+                        City = "Hong Kong",
+                        Venue = "Tokyo club",
                         UserActivities = new List<UserActivity>
                         {
                             new UserActivity
@@ -196,21 +209,16 @@ namespace Persistance
                                 IsHost = true,
                                 Date = DateTime.Now.AddMonths(5)
                             },
-                            new UserActivity
-                            {
-                                AppUserId = "b",
-                                IsHost = false,
-                                Date = DateTime.Now.AddMonths(5)
-                            },
+                            
                         }
                     },
                     new Activity
                     {
-                        Title = "Future Activity 6",
+                        Title = "Hot dog festival night",
                         Date = DateTime.Now.AddMonths(6),
-                        Description = "Activity 6 months in future",
-                        Category = "music",
-                        City = "London",
+                        Description = "Eat as many hotdogs as your heart requires",
+                        Category = "food",
+                        City = "Bloemfontein",
                         Venue = "O2 Arena",
                         UserActivities = new List<UserActivity>
                         {
@@ -230,12 +238,12 @@ namespace Persistance
                     },
                     new Activity
                     {
-                        Title = "Future Activity 7",
+                        Title = "Party today tomorrow forever",
                         Date = DateTime.Now.AddMonths(7),
-                        Description = "Activity 7 months in future",
-                        Category = "travel",
-                        City = "Berlin",
-                        Venue = "All",
+                        Description = "Party that goes on until you drop",
+                        Category = "party",
+                        City = "Holland",
+                        Venue = "Holland night club",
                         UserActivities = new List<UserActivity>
                         {
                             new UserActivity
@@ -254,12 +262,12 @@ namespace Persistance
                     },
                     new Activity
                     {
-                        Title = "Future Activity 8",
+                        Title = "Lets move",
                         Date = DateTime.Now.AddMonths(8),
-                        Description = "Activity 8 months in future",
-                        Category = "drinks",
+                        Description = "Lets take a stand and move together",
+                        Category = "cultural",
                         City = "London",
-                        Venue = "Pub",
+                        Venue = "Moving center",
                         UserActivities = new List<UserActivity>
                         {
                             new UserActivity

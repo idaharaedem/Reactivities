@@ -27,7 +27,7 @@ export const HomePage = () => {
                         <h2> Create, Plan and Organise Events </h2>
                     <Header color='orange' as='h3' inverted content={`Welcome back ${user.displayname} !`} />
                     <Button as={Link} to='/activities' size='huge' inverted>
-                        Go to Activities!
+                        Go to Events!
                     </Button>
                 </Fragment>
                 )

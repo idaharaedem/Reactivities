@@ -5,7 +5,7 @@ import {IActivitiesEnvelope, IActivity} from '../models/Activity'
 import { IPhoto, IProfile } from '../models/Profile';
 import { IUser, IUserFormValues } from '../models/User';
 
-axios.defaults.baseURL = 'http://localhost:5000/api';
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 //We can also use an interceptor for the request
 //getting authentication for the user to see the activity list
@@ -41,18 +41,18 @@ axios.interceptors.response.use(undefined, error => {
     throw error.response;
 });
 
-const sleep = (ms: number) =>  (response: AxiosResponse) => 
-new Promise<AxiosResponse>(resolve => setTimeout(()=> resolve(response), ms));
+// const sleep = (ms: number) =>  (response: AxiosResponse) => 
+// new Promise<AxiosResponse>(resolve => setTimeout(()=> resolve(response), ms));
 
 //store request in constant
 const responseBody = (response: AxiosResponse) => response.data;
 
 //request object
 const requests = {
-    get: (url: string) => axios.get(url).then(sleep(1000)).then(responseBody),
-    post: (url:string, body: {}) => axios.post(url, body).then(sleep(1000)).then(responseBody),
-    put: (url:string, body: {}) => axios.put(url,body).then(sleep(1000)).then(responseBody),
-    delete: (url:string )=> axios.delete(url).then(sleep(1000)).then(responseBody),
+    get: (url: string) => axios.get(url).then(responseBody),
+    post: (url:string, body: {}) => axios.post(url, body).then(responseBody),
+    put: (url:string, body: {}) => axios.put(url,body).then(responseBody),
+    delete: (url:string )=> axios.delete(url).then(responseBody),
     //For image posting
     postForm: (url: string, file: Blob) => {
         let formData = new FormData();
@@ -65,7 +65,7 @@ const requests = {
 
 const Activities = {
     //need to use axios directly to pass a configuration object
-    lists: (params:URLSearchParams): Promise<IActivitiesEnvelope> => axios.get('/activities', {params: params}).then(sleep(1000)).then(responseBody),
+    lists: (params:URLSearchParams): Promise<IActivitiesEnvelope> => axios.get('/activities', {params: params}).then(responseBody),
     details: (id:string) => requests.get(`/activities/${id}`),
     create: (activity: IActivity) => requests.post(`/activities`, activity),
     update: (id:string, activity: IActivity) => requests.put(`/activities/${id}`, activity),
