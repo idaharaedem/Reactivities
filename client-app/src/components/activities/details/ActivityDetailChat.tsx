@@ -14,7 +14,7 @@ import { formatDistance } from 'date-fns';
   const {createHubConnection,stopHubConnection, addComment, selectedActivity} = rootStore.activityStore;
 
   useEffect(()=> {
-    createHubConnection();
+    createHubConnection(selectedActivity!.id);
     //cleaning up when leaving component
     return ()=> {
       stopHubConnection();

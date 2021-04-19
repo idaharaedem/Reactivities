@@ -81,7 +81,7 @@ export default class ActivityStore {
     //actions
 
     //We are not able to send our token as http headers so we use this protocol for chathub
-     createHubConnection = () => {
+     createHubConnection = (activityId: string) => {
          this.hubConnection = new HubConnectionBuilder() 
             .withUrl( process.env.REACT_APP_API_CHAT_URL!, {
                 accessTokenFactory: () => this.rootStore.commonStore.token!
@@ -93,9 +93,14 @@ export default class ActivityStore {
             .then(()=> {
                 console.log(this.hubConnection!.state)
             })
+            .then(()=> {
+                console.log('attempting to join group')
+                if(this.hubConnection!.state === 'Connected')
+                this.hubConnection?.invoke('AddGroup', activityId)
+            })
 
             .catch(error => {
-                console.log(error)
+                console.log('Error establishing connection', error)
             }) 
             //tell it what to do when recieving a comment
             this.hubConnection.on("CommentReceived", comment => {
@@ -104,11 +109,19 @@ export default class ActivityStore {
                 })
             })
 
+            this.hubConnection.on('Send', message => {
+               
+            })
+
      }
 
      stopHubConnection = () => {
-        
-            this.hubConnection?.stop();
+            this.hubConnection!.invoke('RemoveFromGroup', this.selectedActivity!.id)
+            .then(()=> {
+                this.hubConnection?.stop();
+            })
+           .then(()=> console.log('Stopped Connection'))
+           .catch((err)=> console.log(err))
      }
 
      addComment = async (values: any) => {

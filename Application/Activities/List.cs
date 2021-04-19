@@ -60,11 +60,11 @@ namespace Application.Activities
 
             public async Task<ActivitiesEnvelope> Handle(Query request, CancellationToken cancellationToken)
             {
-                var querable = _context.Activities.Where(x => x.Date >= request.StartDate)
+                var querable =  _context.Activities.Where(x => x.Date >= request.StartDate)
                 .OrderBy(x => x.Date)
                 .AsQueryable();
 
-                var user = _context.Users.SingleOrDefaultAsync(a => a.UserName == _accessor.getUsername());
+                var user = await _context.Users.SingleOrDefaultAsync(a => a.UserName == _accessor.getUsername());
 
                 if (request.IsGoing && !request.IsHost)
                 {
